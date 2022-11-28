@@ -27,7 +27,7 @@ public class MemoryTestGame {
     public  MemoryTestGame(){
         canvas = new CanvasWindow("Memory Game", CANVAS_WIDTH, CANVAS_HEIGHT);
         canvas.setBackground(Color.GRAY);
-        lives = new GraphicsText("Lives:" + gameLives, 400, 50);
+        lives = new GraphicsText("Lives:" + gameLives, CANVAS_WIDTH, 50);
     }
     
     /*

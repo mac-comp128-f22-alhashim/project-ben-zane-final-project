@@ -11,6 +11,7 @@ public class TileManager {
     private double tileWidth;
     private double tileHeight;
     private double numberOfTiles;
+    private int tileID;
     private Color color;
 
     CanvasWindow canvas;
