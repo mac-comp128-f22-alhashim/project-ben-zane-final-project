@@ -8,16 +8,11 @@ public class FinalMain {
     private static TileManager tm;
     private static MapManagement mm;
 
-
-
     private static final int CANVAS_WIDTH = 650;
     private static final int CANVAS_HEIGHT = 650;
 
-
-
-
     public FinalMain(){
-        canvas = new CanvasWindow("Memory Game", CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas = new CanvasWindow("Sequence Game", CANVAS_WIDTH, CANVAS_HEIGHT);
         canvas.setBackground(Color.BLACK);
     }
 
@@ -30,11 +25,12 @@ public class FinalMain {
         mm = new MapManagement();
         mm.dimensionsGenerator(10);
 
-        tm.createAllTiles(mm.dimensionsGenerator(30), 20);
+        tm.createAllTiles(mm.dimensionsGenerator(30), 5);
 
-
-
-        
+        for (int i = 0; i < 5; i++) {
+            tm.createRandomSequence();
+            canvas.pause(2000);
+        }        
     }
 
 
@@ -43,8 +39,5 @@ public class FinalMain {
     // then the sequence has 2 elements
     // then the user clicks them
     // then keep going until the user fails
-
-    
-
     
 }

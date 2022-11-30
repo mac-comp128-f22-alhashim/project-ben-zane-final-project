@@ -1,6 +1,5 @@
 import edu.macalester.graphics.CanvasWindow;
 import java.awt.Color;
-import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +9,8 @@ import java.util.Map;
 * the randomization of the tiles
 */
 public class TileManager {
-   
-   
+    private static final Color STD_COLOR = Color.BLUE;
+    private static final Color LIT_COLOR = Color.CYAN;
     private double numberOfTiles;
     private Color color;
 
@@ -20,12 +19,10 @@ public class TileManager {
     private int randomNum;
     
     private List<Tile> tileList = new ArrayList<Tile>();
-    private List<Integer> correctIndex = new ArrayList<Integer>();  
+    private List<Integer> solution = new ArrayList<Integer>();  
     private List<Tile> correctTileList = new ArrayList<Tile>();
- 
 
-    private ArrayDeque<Tile> sequenceDeque = new ArrayDeque<Tile>();
-
+    private ArrayDeque<Tile> sequence = new ArrayDeque<Tile>();
 
     /**
      * TileManager constructor
@@ -82,31 +79,32 @@ public class TileManager {
     public void clearAllLists(){            
         correctTileList.clear();
         tileList.clear();
-        correctIndex.clear();
+        solution.clear();
     }
                                     //tried to get method below to make use of the map
     /**
      * A method that creates the tile objects with rows and columns for the tiles
      */
     public void createAllTiles(Map<Integer, Double> dimensions, int i){
-
         double topX = 75;
         double topY = 75;
-        color = Color.BLUE;
 
-        for(int column = 0; column < i; column ++){
-            for(int row = 0; row < i; row ++){
-                Tile newTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), color);
-                Tile correctTileListTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), color);
+        for (int column = 0; column < i; column ++){
+            for (int row = 0; row < i; row ++){
+                Tile newTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), STD_COLOR);
+
                 canvas.add(newTile);
+                
                 tileList.add(newTile);
-                canvas.add(correctTileListTile);
-                correctTileList.add(correctTileListTile);
+                
                 topX += dimensions.get(i);
             }
+            
             topX = 75;
             topY += dimensions.get(i);
         }
+
+        numberOfTiles = Math.pow(i, 2);
     }
     
     public int getRandNum(){
@@ -114,16 +112,30 @@ public class TileManager {
         return randomNum;
     }
 
+    public void createRandomSequence() {
+        // Create random number
+        int randomNumber = getRandNum();
 
-    /**             IN PROGRESS
-     * A method that creates a random sequence of tiles that will be clicked
-     */
-    public void createRandomSequence(ArrayDeque<Tile> sequenceDeque){
-            
-        int x = getRandNum();
-        sequenceDeque.add(tileList.get(x));
-        correctIndex.add(x);
+        // Add a random tile from the list of tiles to the sequence deque
+        sequence.add(tileList.get(randomNumber));
+
+        // Add the index of the correct in-order tile to the solution list
+        solution.add(randomNumber);
+
+        System.out.println(solution.toString());
+
+        lightTilesInSequence(canvas);
     }
 
-    
+    private void lightTilesInSequence(CanvasWindow canvas) {
+        for (int index : solution) {
+            tileList.get(index).setFillColor(LIT_COLOR);
+            canvas.draw();
+            canvas.pause(500);
+
+            tileList.get(index).setFillColor(STD_COLOR);
+            canvas.draw();
+            canvas.pause(500);
+        }
+    }
 }
