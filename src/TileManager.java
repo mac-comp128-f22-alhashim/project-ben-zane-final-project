@@ -2,6 +2,7 @@ import edu.macalester.graphics.CanvasWindow;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 /*
 * Creates a class that creates the grids of the tiles and generates a sequence for 
 * the randomization of the tiles
@@ -25,15 +26,9 @@ public class TileManager {
     /**
      * TileManager constructor
      * @param canvas active canvas input
-     * @param tileWidth width of tile
-     * @param tileHeight height of tile
-     * @param numberOfTiles total tile number
     */
-    public TileManager(CanvasWindow canvas, double tileWidth, double tileHeight, double numberOfTiles){
+    public TileManager(CanvasWindow canvas){
         this.canvas = canvas;
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
-        this.numberOfTiles = numberOfTiles;
     }
     
     /* 
@@ -85,29 +80,28 @@ public class TileManager {
         tileList.clear();
         correctIndex.clear();
     }
-
+                                    //tried to get method below to make use of the map
     /**
      * A method that creates the tile objects with rows and columns for the tiles
      */
-    public void createAllTiles(){
+    public void createAllTiles(Map<Integer, Double> dimensions, int i){
 
-        double topX = 100;
-        double topY = 100;
+        double topX = 75;
+        double topY = 75;
         color = Color.BLUE;
 
-        for(int column = 0; column < Math.sqrt(numberOfTiles); column ++){
-            for(int row = 0; row < Math.sqrt(numberOfTiles); row ++){
-                
-                Tile newTile = new Tile(topX, topY, tileWidth, tileHeight, color);
-                Tile correctTileListTile = new Tile(topX, topY, tileWidth, tileHeight, color);
+        for(int column = 0; column < i; column ++){
+            for(int row = 0; row < i; row ++){
+                Tile newTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), color);
+                Tile correctTileListTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), color);
                 canvas.add(newTile);
                 tileList.add(newTile);
                 canvas.add(correctTileListTile);
                 correctTileList.add(correctTileListTile);
-                topX += tileWidth;
+                topX += dimensions.get(i);
             }
-            topX = 100;
-            topY += tileWidth;
+            topX = 75;
+            topY += dimensions.get(i);
         }
     }
     
