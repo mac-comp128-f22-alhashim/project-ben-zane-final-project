@@ -1,5 +1,7 @@
 import edu.macalester.graphics.CanvasWindow;
 import java.awt.Color;
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +11,8 @@ import java.util.Map;
 */
 public class TileManager {
    
-    private double tileWidth;
-    private double tileHeight;
+   
     private double numberOfTiles;
-    private int tileID;
     private Color color;
 
     CanvasWindow canvas;
@@ -23,6 +23,10 @@ public class TileManager {
     private List<Integer> correctIndex = new ArrayList<Integer>();  
     private List<Tile> correctTileList = new ArrayList<Tile>();
  
+
+    private ArrayDeque<Tile> sequenceDeque = new ArrayDeque<Tile>();
+
+
     /**
      * TileManager constructor
      * @param canvas active canvas input
@@ -63,7 +67,7 @@ public class TileManager {
     public void removeCorrectTiles(){
        for(int i = 0; i < correctTileList.size(); i++){
         canvas.remove(correctTileList.get(i));
-       }
+        }
     }
 
     public void removeAllTiles(){
@@ -110,24 +114,16 @@ public class TileManager {
         return randomNum;
     }
 
-    /**
-    * A method that generates a random sequence for the tiles to appear randomly on 
-    * the grid
-    */
-    public List<Integer> generateSequence(){
-        for(int i = 0; i < (Math.sqrt(numberOfTiles)); i++){      
-            int randomTile = getRandNum();
-            if(!correctIndex.contains(randomTile)){
-                correctIndex.add(randomTile);
-            }
-            else if(correctIndex.contains(randomTile)){
-                randomTile = getRandNum();
-                i--;
-            }
-        }    
-        for(Integer i : correctIndex){
-            correctTileList.get(i).lightUpCorrect();
-        }
-        return correctIndex;                            
+
+    /**             IN PROGRESS
+     * A method that creates a random sequence of tiles that will be clicked
+     */
+    public void createRandomSequence(ArrayDeque<Tile> sequenceDeque){
+            
+        int x = getRandNum();
+        sequenceDeque.add(tileList.get(x));
+        correctIndex.add(x);
     }
+
+    
 }

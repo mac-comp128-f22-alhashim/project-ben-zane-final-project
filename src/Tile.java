@@ -16,7 +16,6 @@ public class Tile extends Rectangle {
      * @param WIDTH width of tile
      * @param HEIGHT height of tile
      * @param color fill color of tile
-     * @param ID tile ID
      */
     public Tile(double topX, double topY, double WIDTH, double HEIGHT, Color color){
         super(topX, topY, WIDTH, HEIGHT);
@@ -39,7 +38,7 @@ public class Tile extends Rectangle {
     }
 
     public void lightUpWrong(){
-        this.setFillColor(Color.BLACK);
+        this.setFillColor(Color.GRAY);
     }  
 
     /**
@@ -58,12 +57,8 @@ public class Tile extends Rectangle {
         return tileIsLit;
     }
 
-    /*
-     * Used to get the tile ID                                          #doesnt work
-    //  */
-    // public int getTileID(){
-    //     return ID;
-    // }
+   
+ 
 }
 
 

@@ -6,7 +6,6 @@ public class FinalMain {
 
     private static CanvasWindow canvas;
     private static TileManager tm;
-
     private static MapManagement mm;
 
 
@@ -15,7 +14,6 @@ public class FinalMain {
     private static final int CANVAS_HEIGHT = 650;
 
 
- 
 
 
     public FinalMain(){
@@ -32,13 +30,19 @@ public class FinalMain {
         mm = new MapManagement();
         mm.dimensionsGenerator(10);
 
-        tm.createAllTiles(mm.dimensionsGenerator(30), 27);
-      
+        tm.createAllTiles(mm.dimensionsGenerator(30), 20);
+
+
 
         
     }
 
 
+    // so there should be a phase where the sequence has 1 element
+    // then the user clicks it
+    // then the sequence has 2 elements
+    // then the user clicks them
+    // then keep going until the user fails
 
     
 
