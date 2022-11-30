@@ -12,7 +12,6 @@ public class TileManager {
     private static final Color STD_COLOR = Color.BLUE;
     private static final Color LIT_COLOR = Color.CYAN;
     private double numberOfTiles;
-    private Color color;
 
     CanvasWindow canvas;
 
@@ -81,7 +80,7 @@ public class TileManager {
         tileList.clear();
         solution.clear();
     }
-                                    //tried to get method below to make use of the map
+    // tried to get method below to make use of the map
     /**
      * A method that creates the tile objects with rows and columns for the tiles
      */

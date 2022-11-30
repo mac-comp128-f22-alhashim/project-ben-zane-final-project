@@ -27,17 +27,20 @@ public class FinalMain {
 
         tm.createAllTiles(mm.dimensionsGenerator(30), 5);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             tm.createRandomSequence();
             canvas.pause(2000);
         }        
-    }
 
+        canvas.onClick(event -> {
+            
+        });
+    }
 
     // so there should be a phase where the sequence has 1 element
     // then the user clicks it
     // then the sequence has 2 elements
     // then the user clicks them
     // then keep going until the user fails
-    
+
 }
