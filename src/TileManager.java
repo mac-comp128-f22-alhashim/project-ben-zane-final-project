@@ -9,8 +9,8 @@ import java.util.Map;
 * the randomization of the tiles
 */
 public class TileManager {
-    private static final Color STD_COLOR = Color.BLUE;
-    private static final Color LIT_COLOR = Color.CYAN;
+    public static final Color STD_COLOR = Color.decode("#2573C2");
+    private static final Color LIT_COLOR = Color.WHITE;
     private double numberOfTiles;
 
     CanvasWindow canvas;
@@ -21,7 +21,7 @@ public class TileManager {
     private List<Integer> solution = new ArrayList<Integer>();  
     private List<Tile> correctTileList = new ArrayList<Tile>();
 
-    private ArrayDeque<Tile> sequence = new ArrayDeque<Tile>();
+    public ArrayDeque<Tile> sequence = new ArrayDeque<Tile>();
 
     /**
      * TileManager constructor
