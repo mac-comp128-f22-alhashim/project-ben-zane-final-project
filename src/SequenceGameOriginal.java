@@ -1,11 +1,8 @@
 import edu.macalester.graphics.*;
 import java.awt.Color;
 import java.util.ArrayDeque;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class SequenceGame {
+public class SequenceGameOriginal {
     /*
      * TODO:
      * Make the canvas actually wait for the user to click
@@ -19,20 +16,14 @@ public class SequenceGame {
     private TileManager tileManage;
     private MapManagement mapManage;
     private GraphicsText levelLable;
-    private ArrayDeque<Tile> sequence;
-
-    private Lock lock = new ReentrantLock();
-    Condition condition = lock.newCondition();
-    boolean levelCompleted = false;
 
     private static final int CANVAS_WIDTH = 650;
     private static final int CANVAS_HEIGHT = 650;
 
-    public SequenceGame(){
+    public SequenceGameOriginal(){
         level = 1;
         running = true;
 
-        sequence = new ArrayDeque<>();
         canvas = new CanvasWindow("Sequence Game", CANVAS_WIDTH, CANVAS_HEIGHT);
         tileManage = new TileManager(canvas);
         mapManage = new MapManagement();
@@ -43,12 +34,7 @@ public class SequenceGame {
 
         canvas.animate(() -> {
             if (running) {
-                try {
-                    levelCompleted = false;
-                    awaitLevelCompletion();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                handleGameLogic();
             } else {
                 levelLable.setText("You lost");
                 canvas.pause(5000);
@@ -75,52 +61,47 @@ public class SequenceGame {
         canvas.add(levelLable);
     }
 
-    public void awaitLevelCompletion() throws InterruptedException {
-        lock.lock();
-
-        tileManage.createRandomSequence();
-        sequence.addAll(tileManage.sequence);
-
-        try {
-            while (!levelCompleted) {
-                condition.await();
-            }
-        } finally {
-            lock.unlock();
-            level++;
-            levelLable.setText("Level: " + level);
-        }
-    }
-
     public void handleGameLogic() {
-        lock.lock();
+        tileManage.createRandomSequence();
 
+        ArrayDeque<Tile> modSequence = new ArrayDeque<>();
+        modSequence.addAll(tileManage.sequence);
+
+        // We need the program to wait until the sequence deque is empty or the user selects the wrong tile.
         canvas.onClick(event -> {
             GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
-            if (!sequence.isEmpty()) {
+            // While the sequence deque is not empty, i.e., the user still has to click more tiles
+            while (!modSequence.isEmpty()) {
+
+                // If the element the user clicked on is a Tile
                 if (clickedElement instanceof Tile) {
-                    if (clickedElement.equals(sequence.peek())) {
+
+                    // If the element the user clicked on is the correct Tile in the sequence
+                    if (clickedElement.equals(modSequence.peek())) {
+
+                        // Provide visual feedback of the clicked tile
                         colorTile((Tile) clickedElement, Color.WHITE);
                         canvas.pause(200);
                         colorTile((Tile) clickedElement, TileManager.STD_COLOR);
 
-                        sequence.pop();
+                        // Remove the Tile from the sequence
+                        modSequence.pop();
                     } else {
                         running = false;
+                        return;
                     }
                 }
             }
         });
 
-        try {
-            if (sequence.isEmpty() || !running) {
-                levelCompleted = true;
-                condition.signal();
-            }
-        } finally {
-            lock.unlock();
-        }
+        // Once the sequence deque is empty, the user has correctly clicked on all of the tiles and we can proceed to the next level.
+        // We then update the lever counter.
+        level++;
+        levelLable.setText("Level: " + level);
+
+        // We finally exit from the loop and lambda, and return from this method to the animate lambda in the constructor.
+        // When that happens, we'll immediately return to this method and add to the sequence. 
     }
 
     private void colorTile(Tile tile, Color color) {
@@ -131,7 +112,7 @@ public class SequenceGame {
     * Runs the game
     */
     public static void main(String[] args) {
-        SequenceGame game = new SequenceGame();
+        SequenceGameOriginal game = new SequenceGameOriginal();
         
         game.init();
     }
