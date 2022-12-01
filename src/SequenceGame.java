@@ -2,9 +2,10 @@ import edu.macalester.graphics.*;
 import java.awt.Color;
 import java.util.ArrayDeque;
 
-public class FinalMain {
+public class SequenceGame {
     /*
      * TODO:
+     * Make the canvas actually wait for the user to click
      * Add difficulty selector, which changes the grid size.
      * Have the tiles randomly change color
      */
@@ -19,7 +20,7 @@ public class FinalMain {
     private static final int CANVAS_WIDTH = 650;
     private static final int CANVAS_HEIGHT = 650;
 
-    public FinalMain(){
+    public SequenceGame(){
         level = 1;
         running = true;
 
@@ -103,7 +104,7 @@ public class FinalMain {
         // When that happens, we'll immediately return to this method and add to the sequence. 
     }
 
-    protected void colorTile(Tile tile, Color color) {
+    private void colorTile(Tile tile, Color color) {
         tile.setFillColor(color);
     }
 
@@ -111,7 +112,7 @@ public class FinalMain {
     * Runs the game
     */
     public static void main(String[] args) {
-        FinalMain game = new FinalMain();
+        SequenceGame game = new SequenceGame();
         
         game.init();
     }
