@@ -21,7 +21,7 @@ public class MapManagement {
     public Map<Integer, Double> dimensionsGenerator(int i){
 
         Map<Integer, Double> dimensions = new HashMap<>();
-        int counter = 3;
+        int counter = 1;
 
         for(int j = 0; j < i; j++){
             dimensions.put(counter, (CANVAS_WIDTH-150)/counter);

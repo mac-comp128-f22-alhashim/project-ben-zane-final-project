@@ -20,8 +20,7 @@ public class TileManager {
     private List<Tile> tileList = new ArrayList<Tile>();
     private List<Integer> solution = new ArrayList<Integer>();  
     private List<Tile> correctTileList = new ArrayList<Tile>();
-
-    public ArrayDeque<Tile> sequence = new ArrayDeque<Tile>();
+    public ArrayDeque<Tile> gameSequence = new ArrayDeque<Tile>();  // Tiles will not be popped from this deque; we need to keep it intact so we can keep adding to it for new levels.
 
     /**
      * TileManager constructor
@@ -75,7 +74,8 @@ public class TileManager {
         return tileList;
     }
 
-    public void clearAllLists(){            
+    public void clearAllLists(){  
+        gameSequence.clear();          
         correctTileList.clear();
         tileList.clear();
         solution.clear();
@@ -116,7 +116,7 @@ public class TileManager {
         int randomNumber = getRandNum();
 
         // Add a random tile from the list of tiles to the sequence deque
-        sequence.add(tileList.get(randomNumber));
+        gameSequence.add(tileList.get(randomNumber));
 
         // Add the index of the correct in-order tile to the solution list
         solution.add(randomNumber);

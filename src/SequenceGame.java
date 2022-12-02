@@ -8,11 +8,12 @@ public class SequenceGame {
     /*
      * TODO:
      * Add difficulty selector, which changes the grid size.
-     * Have the tiles randomly change color
+     * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
      */
     private int level;
     private boolean running;
-    private ArrayDeque<Tile> sequence;
+    private boolean sequenceIsAnimating;
+    private ArrayDeque<Tile> userSequence;  // Tiles will be popped from this deque.
 
     private CanvasWindow canvas;
     private TileManager tileManage;
@@ -25,7 +26,8 @@ public class SequenceGame {
     public SequenceGame(){
         level = 1;
         running = true;
-        sequence = new ArrayDeque<>();
+        sequenceIsAnimating = false;
+        userSequence = new ArrayDeque<>();
 
         canvas = new CanvasWindow("Sequence Game", CANVAS_WIDTH, CANVAS_HEIGHT);
         tileManage = new TileManager(canvas);
@@ -34,32 +36,27 @@ public class SequenceGame {
         levelLable = new GraphicsText();
 
         canvas.onClick(event -> {
-            if (running) {
+            if (running && !sequenceIsAnimating) {
                 GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
                 // If the sequence deque is not empty, i.e., the user still has to click more tiles
-                if (!sequence.isEmpty()) {
+                if (!userSequence.isEmpty()) {
 
                     // If the element the user clicked on is a Tile
                     if (clickedElement instanceof Tile) {
 
                         // If the element the user clicked on is the correct Tile in the sequence
-                        if (clickedElement.equals(sequence.peek())) {
+                        if (clickedElement.equals(userSequence.peek())) {
 
                             // Provide visual feedback of the clicked tile
-                            colorTile((Tile) clickedElement, Color.WHITE);
-                            canvas.pause(200);
-                            colorTile((Tile) clickedElement, TileManager.STD_COLOR);
+                            userClickedTile(clickedElement);
 
                             // Remove the Tile from the sequence
-                            sequence.pop();
+                            userSequence.pop();
 
-                            if (sequence.isEmpty()) {
-                                level++;
-                                levelLable.setText("Level: " + level);
-                                canvas.draw();
-                                canvas.pause(1000);
-                                populateTiles();
+                            // If the user sequence is empty, i.e., the level is done, we call changeLevel to update the canvas accordingly.
+                            if (userSequence.isEmpty()) {
+                                changeLevel();
                             }
                         } else {
                             // The user clicked on an incorrect tile, so we stop the game.
@@ -70,6 +67,20 @@ public class SequenceGame {
                 }
             }
         });
+    }
+
+    private void userClickedTile(GraphicsObject clickedElement) {
+        colorTile((Tile) clickedElement, Color.WHITE);
+        canvas.pause(200);
+        colorTile((Tile) clickedElement, TileManager.STD_COLOR);
+    }
+
+    private void changeLevel() {
+        level++;
+        levelLable.setText("Level: " + level);
+        canvas.draw();
+        canvas.pause(1000);
+        populateTiles();
     }
 
     private void init() {
@@ -102,9 +113,13 @@ public class SequenceGame {
     }
 
     private void populateTiles() {
+        sequenceIsAnimating = true;
+        
         tileManage.createRandomSequence();
-        sequence.addAll(tileManage.sequence);
+        userSequence.addAll(tileManage.gameSequence);
         canvas.draw();
+
+        sequenceIsAnimating = false;
     }
 
     private void colorTile(Tile tile, Color color) {
@@ -113,9 +128,10 @@ public class SequenceGame {
     }
 
     private void gameLose() {
+        running = false;
+
         canvas.removeAll();
-        sequence.clear();
-        tileManage.clearAllLists();
+        wipeSequence();
 
         GraphicsText loseLabel = new GraphicsText();
         GraphicsText instructLabel = new GraphicsText();
@@ -144,6 +160,11 @@ public class SequenceGame {
                 init();
             }
         });
+    }
+
+    private void wipeSequence() {
+        userSequence.clear();
+        tileManage.clearAllLists();
     }
 
     /*
