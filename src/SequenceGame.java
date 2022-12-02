@@ -1,11 +1,12 @@
 import edu.macalester.graphics.*;
+import edu.macalester.graphics.events.Key;
+
 import java.awt.Color;
 import java.util.ArrayDeque;
 
 public class SequenceGame {
     /*
      * TODO:
-     * Make the canvas actually wait for the user to click and not just immediately die
      * Add difficulty selector, which changes the grid size.
      * Have the tiles randomly change color
      */
@@ -32,8 +33,6 @@ public class SequenceGame {
 
         levelLable = new GraphicsText();
 
-        canvas.setBackground(Color.decode("#2A87D1"));
-
         canvas.onClick(event -> {
             if (running) {
                 GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
@@ -54,27 +53,34 @@ public class SequenceGame {
 
                             // Remove the Tile from the sequence
                             sequence.pop();
+
+                            if (sequence.isEmpty()) {
+                                level++;
+                                levelLable.setText("Level: " + level);
+                                canvas.draw();
+                                canvas.pause(1000);
+                                populateTiles();
+                            }
                         } else {
                             // The user clicked on an incorrect tile, so we stop the game.
                             running = false;
+                            gameLose();
                         }
                     }
-                } else {
-                    // If the sequence deque is empty, the user has successfully clicked on all of the tiles in the right order and we'll move to the next level automatically. 
-                    level++;
-                    levelLable.setText("Level: " + level);
-                    populateTiles();
                 }
             }
         });
     }
 
     private void init() {
+        // Game is running!
+        running = true;
+
         // Reset level count to 1
         level = 1;
 
-        // Creates dimensions
-        mapManage.dimensionsGenerator(10);
+        // Set canvas background color
+        canvas.setBackground(Color.decode("#2A87D1"));
 
         // Creates tiles and grid, will need to be adapted to take in an input for the difficulty
         tileManage.createAllTiles(mapManage.dimensionsGenerator(30), 5);
@@ -86,6 +92,10 @@ public class SequenceGame {
         levelLable.setCenter(CANVAS_WIDTH * 0.50, CANVAS_HEIGHT * 0.055);
 
         canvas.add(levelLable);
+
+        canvas.draw();
+
+        canvas.pause(1000);
 
         // Generate sequence and populate grid for the first time
         populateTiles();
@@ -100,6 +110,40 @@ public class SequenceGame {
     private void colorTile(Tile tile, Color color) {
         tile.setFillColor(color);
         canvas.draw();
+    }
+
+    private void gameLose() {
+        canvas.removeAll();
+        sequence.clear();
+        tileManage.clearAllLists();
+
+        GraphicsText loseLabel = new GraphicsText();
+        GraphicsText instructLabel = new GraphicsText();
+
+        loseLabel.setText("You lost at level " + level + "!");
+        loseLabel.setFillColor(Color.WHITE);
+        loseLabel.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.045);
+        loseLabel.setCenter(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5);
+        canvas.add(loseLabel);
+
+        instructLabel.setText("Press SPACE to play again, or ESCAPE to quit.");
+        instructLabel.setFillColor(Color.WHITE);
+        instructLabel.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.035);
+        instructLabel.setCenter(CANVAS_WIDTH * 0.5, loseLabel.getCenter().getY() * 1.15);
+        canvas.add(instructLabel);
+
+        canvas.draw();
+
+        canvas.onKeyDown(event -> {
+            if (event.getKey().equals(Key.ESCAPE)) {
+                System.exit(0);
+            }
+
+            if (event.getKey().equals(Key.SPACE)) {
+                canvas.removeAll();
+                init();
+            }
+        });
     }
 
     /*

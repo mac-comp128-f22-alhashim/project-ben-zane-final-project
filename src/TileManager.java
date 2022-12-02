@@ -121,6 +121,7 @@ public class TileManager {
         // Add the index of the correct in-order tile to the solution list
         solution.add(randomNumber);
 
+        // Printing for debugging purposes, remove before pushing to prod
         System.out.println(solution.toString());
 
         lightTilesInSequence(canvas);
