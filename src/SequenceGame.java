@@ -1,29 +1,22 @@
 import edu.macalester.graphics.*;
 import java.awt.Color;
 import java.util.ArrayDeque;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class SequenceGame {
     /*
      * TODO:
-     * Make the canvas actually wait for the user to click
+     * Make the canvas actually wait for the user to click and not just immediately die
      * Add difficulty selector, which changes the grid size.
      * Have the tiles randomly change color
      */
     private int level;
     private boolean running;
+    private ArrayDeque<Tile> sequence;
 
     private CanvasWindow canvas;
     private TileManager tileManage;
     private MapManagement mapManage;
     private GraphicsText levelLable;
-    private ArrayDeque<Tile> sequence;
-
-    private Lock lock = new ReentrantLock();
-    Condition condition = lock.newCondition();
-    boolean levelCompleted = false;
 
     private static final int CANVAS_WIDTH = 650;
     private static final int CANVAS_HEIGHT = 650;
@@ -31,8 +24,8 @@ public class SequenceGame {
     public SequenceGame(){
         level = 1;
         running = true;
-
         sequence = new ArrayDeque<>();
+
         canvas = new CanvasWindow("Sequence Game", CANVAS_WIDTH, CANVAS_HEIGHT);
         tileManage = new TileManager(canvas);
         mapManage = new MapManagement();
@@ -41,18 +34,35 @@ public class SequenceGame {
 
         canvas.setBackground(Color.decode("#2A87D1"));
 
-        canvas.animate(() -> {
+        canvas.onClick(event -> {
             if (running) {
-                try {
-                    levelCompleted = false;
-                    awaitLevelCompletion();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
+
+                // While the sequence deque is not empty, i.e., the user still has to click more tiles
+                if (!sequence.isEmpty()) {
+
+                    // If the element the user clicked on is a Tile
+                    if (clickedElement instanceof Tile) {
+
+                        // If the element the user clicked on is the correct Tile in the sequence
+                        if (clickedElement.equals(sequence.peek())) {
+
+                            // Provide visual feedback of the clicked tile
+                            colorTile((Tile) clickedElement, Color.WHITE);
+                            canvas.pause(200);
+                            colorTile((Tile) clickedElement, TileManager.STD_COLOR);
+
+                            // Remove the Tile from the sequence
+                            sequence.pop();
+                        } else {
+                            running = false;
+                        }
+                    }
+                } else {
+                    level++;
+                    levelLable.setText("Level: " + level);
+                    populateTiles();
                 }
-            } else {
-                levelLable.setText("You lost");
-                canvas.pause(5000);
-                System.exit(0);
             }
         });
     }
@@ -73,54 +83,13 @@ public class SequenceGame {
         levelLable.setCenter(CANVAS_WIDTH * 0.50, CANVAS_HEIGHT * 0.055);
 
         canvas.add(levelLable);
+
+        populateTiles();
     }
 
-    public void awaitLevelCompletion() throws InterruptedException {
-        lock.lock();
-
+    private void populateTiles() {
         tileManage.createRandomSequence();
         sequence.addAll(tileManage.sequence);
-
-        try {
-            while (!levelCompleted) {
-                condition.await();
-            }
-        } finally {
-            lock.unlock();
-            level++;
-            levelLable.setText("Level: " + level);
-        }
-    }
-
-    public void handleGameLogic() {
-        lock.lock();
-
-        canvas.onClick(event -> {
-            GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
-
-            if (!sequence.isEmpty()) {
-                if (clickedElement instanceof Tile) {
-                    if (clickedElement.equals(sequence.peek())) {
-                        colorTile((Tile) clickedElement, Color.WHITE);
-                        canvas.pause(200);
-                        colorTile((Tile) clickedElement, TileManager.STD_COLOR);
-
-                        sequence.pop();
-                    } else {
-                        running = false;
-                    }
-                }
-            }
-        });
-
-        try {
-            if (sequence.isEmpty() || !running) {
-                levelCompleted = true;
-                condition.signal();
-            }
-        } finally {
-            lock.unlock();
-        }
     }
 
     private void colorTile(Tile tile, Color color) {
