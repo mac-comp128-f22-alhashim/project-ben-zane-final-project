@@ -6,10 +6,11 @@ import java.util.ArrayDeque;
 
 public class SequenceGame {
     /*
-     * TODO:
+     * TODO (remove lines as completed or add as necessary)
+     * 
      * Add difficulty selector, which changes the grid size.
      * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
-     * Potentially change the squares to ellipses as a second option
+     * Potentially change the squares to ellipses as an option for the user to choose between
      * Clean up code:
      *      Put canvas dimensions into one variable (it's a square)
      *      Decomposition in all classes
