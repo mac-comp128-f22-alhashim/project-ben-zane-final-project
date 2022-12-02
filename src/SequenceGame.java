@@ -38,7 +38,7 @@ public class SequenceGame {
             if (running) {
                 GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
-                // While the sequence deque is not empty, i.e., the user still has to click more tiles
+                // If the sequence deque is not empty, i.e., the user still has to click more tiles
                 if (!sequence.isEmpty()) {
 
                     // If the element the user clicked on is a Tile
@@ -55,10 +55,12 @@ public class SequenceGame {
                             // Remove the Tile from the sequence
                             sequence.pop();
                         } else {
+                            // The user clicked on an incorrect tile, so we stop the game.
                             running = false;
                         }
                     }
                 } else {
+                    // If the sequence deque is empty, the user has successfully clicked on all of the tiles in the right order and we'll move to the next level automatically. 
                     level++;
                     levelLable.setText("Level: " + level);
                     populateTiles();
@@ -77,6 +79,7 @@ public class SequenceGame {
         // Creates tiles and grid, will need to be adapted to take in an input for the difficulty
         tileManage.createAllTiles(mapManage.dimensionsGenerator(30), 5);
 
+        // Set level label color
         levelLable.setFillColor(Color.WHITE);
         levelLable.setText("Level: " + level);
         levelLable.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.04);
@@ -84,16 +87,19 @@ public class SequenceGame {
 
         canvas.add(levelLable);
 
+        // Generate sequence and populate grid for the first time
         populateTiles();
     }
 
     private void populateTiles() {
         tileManage.createRandomSequence();
         sequence.addAll(tileManage.sequence);
+        canvas.draw();
     }
 
     private void colorTile(Tile tile, Color color) {
         tile.setFillColor(color);
+        canvas.draw();
     }
 
     /*
