@@ -9,6 +9,12 @@ public class SequenceGame {
      * TODO:
      * Add difficulty selector, which changes the grid size.
      * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
+     * Potentially change the squares to ellipses as a second option
+     * Clean up code:
+     *      Put canvas dimensions into one variable (it's a square)
+     *      Decomposition in all classes
+     *      Potentially remove MapManagement and move into TileManager
+     *      Refactor for readability (variable names, comments/javadoc, structure + organization, etc.)
      */
     private int level;
     private boolean running;
