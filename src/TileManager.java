@@ -24,7 +24,7 @@ public class TileManager {
     public ArrayDeque<Tile> gameSequence = new ArrayDeque<Tile>();  // Tiles will not be popped from this deque; we need to keep it intact so we can keep adding to it for new levels.
 
 
-    private final Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.PINK, Color.CYAN, Color.BLACK};
+    private final Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.BLACK};
 
     /**
      * TileManager constructor
