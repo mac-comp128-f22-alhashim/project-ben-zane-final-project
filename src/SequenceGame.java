@@ -8,6 +8,11 @@ public class SequenceGame {
     /*
      * TODO (remove lines as completed or add as necessary)
      * 
+     * 
+     * IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!1
+     * I still get issues where if I click while the screen is showing the sequence the game can crash...
+     * The game behaves strangely when trying to play after retrying for a second time...
+     * 
      * Add difficulty selector, which changes the grid size.
      * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
      * Potentially change the squares to ellipses as an option for the user to choose between
@@ -27,8 +32,7 @@ public class SequenceGame {
     private MapManagement mapManage;
     private GraphicsText levelLable;
 
-    private static final int CANVAS_WIDTH = 650;
-    private static final int CANVAS_HEIGHT = 650;
+    private static final int SIDE = 650;
 
     public SequenceGame(){
         level = 1;
@@ -36,7 +40,7 @@ public class SequenceGame {
         sequenceIsAnimating = false;
         userSequence = new ArrayDeque<>();
 
-        canvas = new CanvasWindow("Sequence Game", CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas = new CanvasWindow("Sequence Game", SIDE, SIDE);
         tileManage = new TileManager(canvas);
         mapManage = new MapManagement();
 
@@ -44,6 +48,8 @@ public class SequenceGame {
 
         canvas.onClick(event -> {
             if (running && !sequenceIsAnimating) {
+                tileManage.strobeAll();                             // This is for the rainbow mode
+                
                 GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
                 // If the sequence deque is not empty, i.e., the user still has to click more tiles
@@ -106,8 +112,8 @@ public class SequenceGame {
         // Set level label color
         levelLable.setFillColor(Color.WHITE);
         levelLable.setText("Level: " + level);
-        levelLable.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.04);
-        levelLable.setCenter(CANVAS_WIDTH * 0.50, CANVAS_HEIGHT * 0.055);
+        levelLable.setFont(FontStyle.PLAIN, SIDE * 0.04);
+        levelLable.setCenter(SIDE * 0.50, SIDE * 0.055);
 
         canvas.add(levelLable);
 
@@ -145,14 +151,14 @@ public class SequenceGame {
 
         loseLabel.setText("You lost at level " + level + "!");
         loseLabel.setFillColor(Color.WHITE);
-        loseLabel.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.045);
-        loseLabel.setCenter(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5);
+        loseLabel.setFont(FontStyle.PLAIN, SIDE * 0.045);
+        loseLabel.setCenter(SIDE * 0.5, SIDE * 0.5);
         canvas.add(loseLabel);
 
         instructLabel.setText("Press SPACE to play again, or ESCAPE to quit.");
         instructLabel.setFillColor(Color.WHITE);
-        instructLabel.setFont(FontStyle.PLAIN, CANVAS_HEIGHT * 0.035);
-        instructLabel.setCenter(CANVAS_WIDTH * 0.5, loseLabel.getCenter().getY() * 1.15);
+        instructLabel.setFont(FontStyle.PLAIN, SIDE * 0.035);
+        instructLabel.setCenter(SIDE * 0.5, loseLabel.getCenter().getY() * 1.15);
         canvas.add(instructLabel);
 
         canvas.draw();

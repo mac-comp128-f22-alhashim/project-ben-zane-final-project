@@ -1,13 +1,18 @@
+import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.Rectangle;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * An interactable tile object that will appear on a canvas
  */
-public class Tile extends Rectangle {
+public class Tile extends Ellipse {   //change rectangle to ellipse to make it an ellipse
     int gameLives;
     
     Boolean tileIsLit = false;
+
+
 
     /**
      * Constructs tile with variable input
@@ -57,7 +62,8 @@ public class Tile extends Rectangle {
         return tileIsLit;
     }
 
-   
+    
+  
  
 }
 

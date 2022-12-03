@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 /*
 * Creates a class that creates the grids of the tiles and generates a sequence for 
 * the randomization of the tiles
@@ -21,6 +22,9 @@ public class TileManager {
     private List<Integer> solution = new ArrayList<Integer>();  
     private List<Tile> correctTileList = new ArrayList<Tile>();
     public ArrayDeque<Tile> gameSequence = new ArrayDeque<Tile>();  // Tiles will not be popped from this deque; we need to keep it intact so we can keep adding to it for new levels.
+
+
+    private final Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.PINK, Color.CYAN, Color.BLACK};
 
     /**
      * TileManager constructor
@@ -138,4 +142,21 @@ public class TileManager {
             canvas.pause(500);
         }
     }
+
+
+    // These are for raindbow mode
+    public void strobe(Tile t){
+        Random rand = new Random();
+        Color color = colors[rand.nextInt(colors.length)];
+        t.setFillColor(color);
+       
+    }
+
+    public void strobeAll(){
+        for(int i = 0; i < tileList.size(); i++){
+            strobe(tileList.get(i));
+        }
+
+    }
+    
 }

@@ -7,8 +7,7 @@ public class MapManagement {
 
 
     private CanvasWindow canvas;
-    private static  double CANVAS_WIDTH = 650;
-    private static  double CANVAS_HEIGHT = 650;
+    private static  double SIDE = 650;
     
     private int gameLives = 5;                  
     private GraphicsText lives;
@@ -24,7 +23,7 @@ public class MapManagement {
         int counter = 1;
 
         for(int j = 0; j < i; j++){
-            dimensions.put(counter, (CANVAS_WIDTH-150)/counter);
+            dimensions.put(counter, (SIDE-150)/counter);
             counter++;
         }
 
