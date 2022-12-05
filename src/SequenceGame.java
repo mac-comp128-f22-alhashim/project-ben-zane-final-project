@@ -11,7 +11,6 @@ public class SequenceGame {
      * 
      * IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!1
      * I still get issues where if I click while the screen is showing the sequence the game can crash...
-     * The game behaves strangely when trying to play after retrying for a second time...
      * 
      * Add difficulty selector, which changes the grid size.
      * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
@@ -45,6 +44,19 @@ public class SequenceGame {
         mapManage = new MapManagement();
 
         levelLable = new GraphicsText();
+        
+        canvas.onKeyDown(event -> {
+            if(running == false){
+                if (event.getKey().equals(Key.ESCAPE)) {
+                    System.exit(0);
+                }
+    
+                if (event.getKey().equals(Key.SPACE)) {
+                    canvas.removeAll();
+                    init();
+                }
+            }
+        });
 
         canvas.onClick(event -> {
             if (running && !sequenceIsAnimating) {
@@ -163,16 +175,7 @@ public class SequenceGame {
 
         canvas.draw();
 
-        canvas.onKeyDown(event -> {
-            if (event.getKey().equals(Key.ESCAPE)) {
-                System.exit(0);
-            }
-
-            if (event.getKey().equals(Key.SPACE)) {
-                canvas.removeAll();
-                init();
-            }
-        });
+     
     }
 
     private void wipeSequence() {
