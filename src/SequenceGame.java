@@ -46,7 +46,7 @@ public class SequenceGame {
         levelLable = new GraphicsText();
         
         canvas.onKeyDown(event -> {
-            if(running == false){
+            if(!running){
                 if (event.getKey().equals(Key.ESCAPE)) {
                     System.exit(0);
                 }
@@ -59,35 +59,36 @@ public class SequenceGame {
         });
 
         canvas.onClick(event -> {
-            if (running && !sequenceIsAnimating) {
-                tileManage.strobeAll();                             // This is for the rainbow mode
-                
-                GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
+            if (sequenceIsAnimating || !running) return;
 
-                // If the sequence deque is not empty, i.e., the user still has to click more tiles
-                if (!userSequence.isEmpty()) {
+            // Strobes tiles in a random pattern when the user clicks
+            // tileManage.strobeAll();                            
+            
+            GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
-                    // If the element the user clicked on is a Tile
-                    if (clickedElement instanceof Tile) {
+            // If the sequence deque is not empty, i.e., the user still has to click more tiles
+            if (!userSequence.isEmpty()) {
 
-                        // If the element the user clicked on is the correct Tile in the sequence
-                        if (clickedElement.equals(userSequence.peek())) {
+                // If the element the user clicked on is a Tile
+                if (clickedElement instanceof Tile) {
 
-                            // Provide visual feedback of the clicked tile
-                            userClickedTile(clickedElement);
+                    // If the element the user clicked on is the correct Tile in the sequence
+                    if (clickedElement.equals(userSequence.peek())) {
 
-                            // Remove the Tile from the sequence
-                            userSequence.pop();
+                        // Provide visual feedback of the clicked tile
+                        userClickedTile(clickedElement);
 
-                            // If the user sequence is empty, i.e., the level is done, we call changeLevel to update the canvas accordingly.
-                            if (userSequence.isEmpty()) {
-                                changeLevel();
-                            }
-                        } else {
-                            // The user clicked on an incorrect tile, so we stop the game.
-                            running = false;
-                            gameLose();
+                        // Remove the Tile from the sequence
+                        userSequence.pop();
+
+                        // If the user sequence is empty, i.e., the level is done, we call changeLevel to update the canvas accordingly.
+                        if (userSequence.isEmpty()) {
+                            changeLevel();
                         }
+                    } else {
+                        // The user clicked on an incorrect tile, so we stop the game.
+                        running = false;
+                        gameLose();
                     }
                 }
             }
