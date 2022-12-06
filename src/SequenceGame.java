@@ -1,5 +1,7 @@
 import edu.macalester.graphics.*;
 import edu.macalester.graphics.events.Key;
+import edu.macalester.graphics.ui.Button;
+// import edu.macalester.graphics.ui.TextField;
 
 import java.awt.Color;
 import java.util.ArrayDeque;
@@ -8,15 +10,10 @@ public class SequenceGame {
     /*
      * TODO (remove lines as completed or add as necessary)
      * 
+     * Fix issue where if the user clicks on the canvas when the sequence is animating, the clicks are registered
      * 
-     * IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!1
-     * I still get issues where if I click while the screen is showing the sequence the game can crash...
-     * 
-     * Add difficulty selector, which changes the grid size.
-     * Include easy (3x3), medium (5x5), hard (10x10), custom (user input)
      * Potentially change the squares to ellipses as an option for the user to choose between
      * Clean up code:
-     *      Put canvas dimensions into one variable (it's a square)
      *      Decomposition in all classes
      *      Potentially remove MapManagement and move into TileManager
      *      Refactor for readability (variable names, comments/javadoc, structure + organization, etc.)
@@ -31,7 +28,12 @@ public class SequenceGame {
     private MapManagement mapManage;
     private GraphicsText levelLable;
 
-    private static final int SIDE = 650;
+    private final int SIDE = 650;
+    private final int CANVAS_CTR = 325;
+    private final int DIFF_EASY = 3;
+    private final int DIFF_STD = 5;
+    private final int DIFF_HARD = 7;
+    private final int DIFF_EXTR = 10;
 
     public SequenceGame(){
         level = 1;
@@ -110,30 +112,86 @@ public class SequenceGame {
     }
 
     private void init() {
-        // Game is running!
-        running = true;
+        GraphicsText title = new GraphicsText();
+        GraphicsText chooseDiff = new GraphicsText();
+        GraphicsText enterCustDiff = new GraphicsText();
+        // TextField custDiff = new TextField();
 
-        // Reset level count to 1
-        level = 1;
+        Button diffEasy = new Button("Easy");
+        Button diffStd = new Button("Standard");
+        Button diffHard = new Button("Hard");
+        Button diffExtr = new Button("Extreme");
+        Button quit = new Button("Exit");
+
+        title.setFillColor(Color.WHITE);
+        title.setText("Sequence Game");
+        title.setFont(FontStyle.BOLD, SIDE * 0.075);
+        title.setCenter(CANVAS_CTR, SIDE * 0.250);
+
+        chooseDiff.setFillColor(Color.WHITE);
+        chooseDiff.setText("Select a Difficulty to Begin:");
+        chooseDiff.setFont(FontStyle.PLAIN, SIDE * 0.035);
+        chooseDiff.setCenter(CANVAS_CTR, title.getCenter().getY() * 1.350);
+
+        // enterCustDiff.setFillColor(Color.WHITE);
+        // enterCustDiff.setText("Or, enter a custom grid size below:");
+        // enterCustDiff.setFont(FontStyle.PLAIN, SIDE * 0.030);
+
+        diffEasy.setCenter(CANVAS_CTR, chooseDiff.getCenter().getY() * 1.250);
+        diffStd.setCenter(CANVAS_CTR, diffEasy.getCenter().getY() * 1.150);
+        diffHard.setCenter(CANVAS_CTR, diffStd.getCenter().getY() * 1.125);
+        diffExtr.setCenter(CANVAS_CTR, diffHard.getCenter().getY() * 1.105);
+
+        quit.setCenter(CANVAS_CTR, canvas.getHeight() * 0.950);
+
+        // enterCustDiff.setCenter(CANVAS_CTR, quit.getCenter().getY() * 0.850);
+        // custDiff.setCenter(CANVAS_CTR, enterCustDiff.getCenter().getY() * 1.050);
 
         // Set canvas background color
         canvas.setBackground(Color.decode("#2A87D1"));
 
+        canvas.add(title);
+        canvas.add(chooseDiff);
+        canvas.add(enterCustDiff);
+
+        canvas.add(diffEasy);
+        canvas.add(diffStd);
+        canvas.add(diffHard);
+        canvas.add(diffExtr);
+        canvas.add(quit);
+        // canvas.add(custDiff);
+
+        diffEasy.onClick(() -> prepCanvasForFirstRun(DIFF_EASY));
+        diffStd.onClick(() -> prepCanvasForFirstRun(DIFF_STD));
+        diffHard.onClick(() -> prepCanvasForFirstRun(DIFF_HARD));
+        diffExtr.onClick(() -> prepCanvasForFirstRun(DIFF_EXTR));
+
+        quit.onClick(() -> System.exit(0));
+    }
+
+    private void prepCanvasForFirstRun(int difficulty) {
+        canvas.removeAll();
+        
+        // Reset level count to 1
+        level = 1;
+
+        running = true;
+
         // Creates tiles and grid, will need to be adapted to take in an input for the difficulty
-        tileManage.createAllTiles(mapManage.dimensionsGenerator(30), 5);
+        tileManage.createAllTiles(mapManage.dimensionsGenerator(30), difficulty);
 
         // Set level label color
         levelLable.setFillColor(Color.WHITE);
         levelLable.setText("Level: " + level);
         levelLable.setFont(FontStyle.PLAIN, SIDE * 0.04);
-        levelLable.setCenter(SIDE * 0.50, SIDE * 0.055);
-
+        levelLable.setCenter(CANVAS_CTR, SIDE * 0.055);
+ 
         canvas.add(levelLable);
-
+ 
         canvas.draw();
-
+ 
         canvas.pause(1000);
-
+ 
         // Generate sequence and populate grid for the first time
         populateTiles();
     }
@@ -165,18 +223,16 @@ public class SequenceGame {
         loseLabel.setText("You lost at level " + level + "!");
         loseLabel.setFillColor(Color.WHITE);
         loseLabel.setFont(FontStyle.PLAIN, SIDE * 0.045);
-        loseLabel.setCenter(SIDE * 0.5, SIDE * 0.5);
+        loseLabel.setCenter(CANVAS_CTR, SIDE * 0.5);
         canvas.add(loseLabel);
 
         instructLabel.setText("Press SPACE to play again, or ESCAPE to quit.");
         instructLabel.setFillColor(Color.WHITE);
         instructLabel.setFont(FontStyle.PLAIN, SIDE * 0.035);
-        instructLabel.setCenter(SIDE * 0.5, loseLabel.getCenter().getY() * 1.15);
+        instructLabel.setCenter(CANVAS_CTR, loseLabel.getCenter().getY() * 1.15);
         canvas.add(instructLabel);
 
         canvas.draw();
-
-     
     }
 
     private void wipeSequence() {

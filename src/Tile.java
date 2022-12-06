@@ -6,7 +6,7 @@ import java.awt.Color;
 /**
  * An interactable tile object that will appear on a canvas
  */
-public class Tile extends Ellipse {   //extends either ellipse or rectangle to change the shape 
+public class Tile extends Rectangle {   //extends either ellipse or rectangle to change the shape 
     int gameLives;
     
     Boolean tileIsLit = false;
