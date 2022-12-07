@@ -1,4 +1,3 @@
-import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.Rectangle;
 import java.awt.Color;
 
@@ -7,7 +6,6 @@ import java.awt.Color;
  * An interactable tile object that will appear on a canvas
  */
 public class Tile extends Rectangle {   //extends either ellipse or rectangle to change the shape 
-    int gameLives;
     
     Boolean tileIsLit = false;
 

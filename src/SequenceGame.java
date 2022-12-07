@@ -1,5 +1,5 @@
 import edu.macalester.graphics.*;
-import edu.macalester.graphics.events.Key;
+import edu.macalester.graphics.events.Key;      //maybe these arent needed if we have graphics*
 import edu.macalester.graphics.ui.Button;
 // import edu.macalester.graphics.ui.TextField;
 
@@ -21,6 +21,7 @@ public class SequenceGame {
     private int level;
     private boolean running;
     private boolean sequenceIsAnimating;
+
     private ArrayDeque<Tile> userSequence;  // Tiles will be popped from this deque.
 
     private CanvasWindow canvas;
@@ -29,11 +30,14 @@ public class SequenceGame {
     private GraphicsText levelLable;
 
     private final int SIDE = 650;
-    private final int CANVAS_CTR = 325;
+    private final int CANVAS_CTR = SIDE/2;
     private final int DIFF_EASY = 3;
     private final int DIFF_STD = 5;
     private final int DIFF_HARD = 7;
     private final int DIFF_EXTR = 10;
+
+    Color transparent = new Color(250, 150, 40, 100);              
+    Blocker blocker = new Blocker(0, 0, SIDE, SIDE, transparent);  
 
     public SequenceGame(){
         level = 1;
@@ -61,11 +65,11 @@ public class SequenceGame {
         });
 
         canvas.onClick(event -> {
-            if (sequenceIsAnimating || !running) return;
-
+            if (sequenceIsAnimating || running==false){
+                return;
+            }
             // Strobes tiles in a random pattern when the user clicks
-            // tileManage.strobeAll();                            
-            
+            tileManage.strobeAll();                            
             GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
             // If the sequence deque is not empty, i.e., the user still has to click more tiles
@@ -85,6 +89,7 @@ public class SequenceGame {
 
                         // If the user sequence is empty, i.e., the level is done, we call changeLevel to update the canvas accordingly.
                         if (userSequence.isEmpty()) {
+                            
                             changeLevel();
                         }
                     } else {
@@ -115,18 +120,28 @@ public class SequenceGame {
         GraphicsText title = new GraphicsText();
         GraphicsText chooseDiff = new GraphicsText();
         GraphicsText enterCustDiff = new GraphicsText();
+
+        GraphicsText instructions = new GraphicsText();
         // TextField custDiff = new TextField();
 
         Button diffEasy = new Button("Easy");
         Button diffStd = new Button("Standard");
         Button diffHard = new Button("Hard");
         Button diffExtr = new Button("Extreme");
-        Button quit = new Button("Exit");
+        Button quit = new Button("Exit");        
+
 
         title.setFillColor(Color.WHITE);
         title.setText("Sequence Game");
         title.setFont(FontStyle.BOLD, SIDE * 0.075);
         title.setCenter(CANVAS_CTR, SIDE * 0.250);
+
+        instructions.setFillColor(Color.WHITE);
+        instructions.setText("Click on the tiles in the order they appear");
+        instructions.setFont(FontStyle.PLAIN, SIDE * 0.030);
+        instructions.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
+
+
 
         chooseDiff.setFillColor(Color.WHITE);
         chooseDiff.setText("Select a Difficulty to Begin:");
@@ -151,6 +166,7 @@ public class SequenceGame {
         canvas.setBackground(Color.decode("#2A87D1"));
 
         canvas.add(title);
+        canvas.add(instructions);
         canvas.add(chooseDiff);
         canvas.add(enterCustDiff);
 
@@ -178,7 +194,7 @@ public class SequenceGame {
         running = true;
 
         // Creates tiles and grid, will need to be adapted to take in an input for the difficulty
-        tileManage.createAllTiles(mapManage.dimensionsGenerator(30), difficulty);
+        tileManage.createAllTiles(mapManage.dimensionsGenerator(10), difficulty);
 
         // Set level label color
         levelLable.setFillColor(Color.WHITE);
@@ -193,17 +209,24 @@ public class SequenceGame {
         canvas.pause(1000);
  
         // Generate sequence and populate grid for the first time
+        running = false;
         populateTiles();
+        running = true;
+
     }
 
     private void populateTiles() {
-        sequenceIsAnimating = true;
         
+        canvas.add(blocker);
+        canvas.draw();
+        sequenceIsAnimating = true;
+
         tileManage.createRandomSequence();
         userSequence.addAll(tileManage.gameSequence);
         canvas.draw();
-
         sequenceIsAnimating = false;
+        canvas.remove(blocker);
+
     }
 
     private void colorTile(Tile tile, Color color) {
