@@ -1,7 +1,9 @@
-import edu.macalester.graphics.*;
-import edu.macalester.graphics.events.Key;      //maybe these arent needed if we have graphics*
+import edu.macalester.graphics.CanvasWindow;
+import edu.macalester.graphics.FontStyle;
+import edu.macalester.graphics.GraphicsObject;
+import edu.macalester.graphics.GraphicsText;
+import edu.macalester.graphics.events.Key;
 import edu.macalester.graphics.ui.Button;
-// import edu.macalester.graphics.ui.TextField;
 
 import java.awt.Color;
 import java.util.ArrayDeque;
@@ -20,7 +22,7 @@ public class SequenceGame {
      */
     private int level;
     private boolean running;
-    private boolean sequenceIsAnimating;
+    private boolean strobesEnabled;
 
     private ArrayDeque<Tile> userSequence;  // Tiles will be popped from this deque.
 
@@ -36,13 +38,9 @@ public class SequenceGame {
     private final int DIFF_HARD = 7;
     private final int DIFF_EXTR = 10;
 
-    Color transparent = new Color(250, 150, 40, 100);              
-    Blocker blocker = new Blocker(0, 0, SIDE, SIDE, transparent);  
-
     public SequenceGame(){
         level = 1;
         running = true;
-        sequenceIsAnimating = false;
         userSequence = new ArrayDeque<>();
 
         canvas = new CanvasWindow("Sequence Game", SIDE, SIDE);
@@ -65,11 +63,11 @@ public class SequenceGame {
         });
 
         canvas.onClick(event -> {
-            if (sequenceIsAnimating || running==false){
-                return;
-            }
+            if (!running) return;
+            
             // Strobes tiles in a random pattern when the user clicks
-            tileManage.strobeAll();                            
+            if (strobesEnabled) tileManage.strobeAll();
+
             GraphicsObject clickedElement = canvas.getElementAt(event.getPosition());
 
             // If the sequence deque is not empty, i.e., the user still has to click more tiles
@@ -120,37 +118,43 @@ public class SequenceGame {
         GraphicsText title = new GraphicsText();
         GraphicsText chooseDiff = new GraphicsText();
         GraphicsText enterCustDiff = new GraphicsText();
-
+        GraphicsText options = new GraphicsText();
         GraphicsText instructions = new GraphicsText();
-        // TextField custDiff = new TextField();
 
         Button diffEasy = new Button("Easy");
         Button diffStd = new Button("Standard");
         Button diffHard = new Button("Hard");
         Button diffExtr = new Button("Extreme");
-        Button quit = new Button("Exit");        
-
+        Button quit = new Button("Exit");
+        Button setShapeEllipse = new Button("Ellipse Mode");
+        Button setShapeRect = new Button("Rectangle Mode");
+        Button toggleStrobeOn = new Button("Enable Color Randomizer");
+        Button toggleStrobeOff = new Button("Disable Color Randomizer");
 
         title.setFillColor(Color.WHITE);
         title.setText("Sequence Game");
         title.setFont(FontStyle.BOLD, SIDE * 0.075);
-        title.setCenter(CANVAS_CTR, SIDE * 0.250);
+        title.setCenter(CANVAS_CTR, SIDE * 0.20);
 
-        instructions.setFillColor(Color.WHITE);
-        instructions.setText("Click on the tiles in the order they appear");
-        instructions.setFont(FontStyle.PLAIN, SIDE * 0.030);
-        instructions.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
-
-
+        options.setFillColor(Color.WHITE);
+        options.setText("Or, customize game options:");
+        options.setFont(FontStyle.PLAIN, SIDE * 0.030);
+        options.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
 
         chooseDiff.setFillColor(Color.WHITE);
         chooseDiff.setText("Select a Difficulty to Begin:");
         chooseDiff.setFont(FontStyle.PLAIN, SIDE * 0.035);
         chooseDiff.setCenter(CANVAS_CTR, title.getCenter().getY() * 1.350);
 
-        // enterCustDiff.setFillColor(Color.WHITE);
-        // enterCustDiff.setText("Or, enter a custom grid size below:");
-        // enterCustDiff.setFont(FontStyle.PLAIN, SIDE * 0.030);
+        instructions.setFillColor(Color.WHITE);
+        instructions.setText("How to play: Click on the tiles in the order they appear!");
+        instructions.setFont(FontStyle.PLAIN, SIDE * 0.030);
+        instructions.setCenter(CANVAS_CTR, SIDE * 0.9);
+
+        toggleStrobeOn.setCenter(CANVAS_CTR, options.getCenter().getY() * 1.07);
+        toggleStrobeOff.setCenter(CANVAS_CTR, toggleStrobeOn.getCenter().getY() * 1.07);
+        setShapeEllipse.setCenter(CANVAS_CTR, toggleStrobeOff.getCenter().getY() * 1.07);
+        setShapeRect.setCenter(CANVAS_CTR, setShapeEllipse.getCenter().getY() * 1.065);
 
         diffEasy.setCenter(CANVAS_CTR, chooseDiff.getCenter().getY() * 1.250);
         diffStd.setCenter(CANVAS_CTR, diffEasy.getCenter().getY() * 1.150);
@@ -159,28 +163,40 @@ public class SequenceGame {
 
         quit.setCenter(CANVAS_CTR, canvas.getHeight() * 0.950);
 
-        // enterCustDiff.setCenter(CANVAS_CTR, quit.getCenter().getY() * 0.850);
-        // custDiff.setCenter(CANVAS_CTR, enterCustDiff.getCenter().getY() * 1.050);
-
-        // Set canvas background color
         canvas.setBackground(Color.decode("#2A87D1"));
 
         canvas.add(title);
-        canvas.add(instructions);
+        canvas.add(options);
         canvas.add(chooseDiff);
         canvas.add(enterCustDiff);
+        canvas.add(instructions);
 
+        canvas.add(toggleStrobeOn);
+        canvas.add(toggleStrobeOff);
+
+        canvas.add(setShapeEllipse);
+        canvas.add(setShapeRect);
+        
         canvas.add(diffEasy);
         canvas.add(diffStd);
         canvas.add(diffHard);
         canvas.add(diffExtr);
         canvas.add(quit);
-        // canvas.add(custDiff);
 
         diffEasy.onClick(() -> prepCanvasForFirstRun(DIFF_EASY));
         diffStd.onClick(() -> prepCanvasForFirstRun(DIFF_STD));
         diffHard.onClick(() -> prepCanvasForFirstRun(DIFF_HARD));
         diffExtr.onClick(() -> prepCanvasForFirstRun(DIFF_EXTR));
+
+        toggleStrobeOff.onClick(() -> {
+            options.setText("Color randomizer disabled!");
+            strobesEnabled = false;
+        });
+
+        toggleStrobeOn.onClick(() -> {
+            options.setText("Color randomizer enabled!");
+            strobesEnabled = true;
+        });
 
         quit.onClick(() -> System.exit(0));
     }
@@ -212,21 +228,13 @@ public class SequenceGame {
         running = false;
         populateTiles();
         running = true;
-
     }
 
     private void populateTiles() {
-        
-        canvas.add(blocker);
-        canvas.draw();
-        sequenceIsAnimating = true;
-
         tileManage.createRandomSequence();
         userSequence.addAll(tileManage.gameSequence);
+        
         canvas.draw();
-        sequenceIsAnimating = false;
-        canvas.remove(blocker);
-
     }
 
     private void colorTile(Tile tile, Color color) {
