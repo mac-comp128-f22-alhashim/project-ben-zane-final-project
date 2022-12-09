@@ -1,3 +1,3 @@
-# Project Title Goes Here
+# Sequence Game
 
-Info about your project goes here
+This game is based on the Sequence Game from humanbenchmark.com.
