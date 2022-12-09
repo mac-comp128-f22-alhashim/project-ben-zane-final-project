@@ -22,7 +22,6 @@ public class SequenceGame {
     private MapManagement mapManage;
     private GraphicsText levelLable;
 
-
     private final int SIDE = 650;
     private final int CANVAS_CTR = SIDE/2;
     private final int DIFF_EASY = 3;
@@ -94,6 +93,9 @@ public class SequenceGame {
         });
     }
 
+    /*
+     * Animates when the user clicks a tile.
+     */
     private void userClickedTile(Fillable clickedElement) {
         Color originalColor = (Color) clickedElement.getFillColor();
 
@@ -104,6 +106,9 @@ public class SequenceGame {
         canvas.draw();
     }
 
+    /*
+     * Changes level. Updates level counter and calls populateTiles().
+     */
     private void changeLevel() {
         level++;
         levelLable.setText("Level: " + level);
@@ -112,6 +117,9 @@ public class SequenceGame {
         populateTiles();
     }
 
+    /*
+     * Initializes title screen and adds related canvas elements.
+     */
     private void init() {
         GraphicsText title = new GraphicsText();
         GraphicsText chooseDiff = new GraphicsText();
@@ -215,6 +223,9 @@ public class SequenceGame {
         quit.onClick(() -> System.exit(0));
     }
 
+    /*
+     * Preps canvas for first run, which is called from the title screen.
+     */
     private void prepCanvasForFirstRun(int difficulty) {
         canvas.removeAll();
         
@@ -244,6 +255,9 @@ public class SequenceGame {
         running = true;
     }
 
+    /**
+     * Creates the random sequence and adds the new sequence to userSequence.
+     */
     private void populateTiles() {
         tileManage.createRandomSequence();
         userSequence.addAll(tileManage.gameSequence);
@@ -251,11 +265,9 @@ public class SequenceGame {
         canvas.draw();
     }
 
-    // private void colorTile(Tile tile, Color color) {
-    //     tile.setFillColor(color);
-    //     canvas.draw();
-    // }
-
+    /*
+     * Handles the game loss condition and draws various loss-related canvas items.
+     */
     private void gameLose() {
         running = false;
 
@@ -280,6 +292,9 @@ public class SequenceGame {
         canvas.draw();
     }
 
+    /*
+     * Clears userSequence and various lists in TileManager to allow automatic level progress to work properly
+     */
     private void wipeSequence() {
         userSequence.clear();
         tileManage.clearAllLists();

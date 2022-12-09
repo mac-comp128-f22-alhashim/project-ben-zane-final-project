@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class MapManagement {
 
-    private static  double SIDE = 650;
+    private static double SIDE = 650;
      
     /*
     * Creates a map of size i.

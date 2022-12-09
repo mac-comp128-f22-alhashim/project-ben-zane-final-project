@@ -24,7 +24,6 @@ public class TileManager {
     private List<Tile> correctTileList = new ArrayList<Tile>();
     public ArrayDeque<Tile> gameSequence = new ArrayDeque<Tile>();  // Tiles will not be popped from this deque; we need to keep it intact so we can keep adding to it for new levels.
 
-
     private final Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.BLACK};
 
     /**
@@ -34,9 +33,7 @@ public class TileManager {
     public TileManager(CanvasWindow canvas){
         this.canvas = canvas;
     }
-    
 
-    
     /* 
     * A method that compares the orginal list of tiles and the list of tiles that has the 
     * correct tiles to be clicked
@@ -96,7 +93,6 @@ public class TileManager {
         isRectangle = false;
     }
 
-    // tried to get method below to make use of the map
     /**
      * A method that creates the tile objects with rows and columns for the tiles
      */
@@ -155,8 +151,7 @@ public class TileManager {
         }
     }
 
-
-    // These are for raindbow mode
+    // These are for the rainbow/color randomizer mode
     public void strobe(Tile t){
         Random rand = new Random();
         Color color = colors[rand.nextInt(colors.length)];
@@ -167,7 +162,5 @@ public class TileManager {
         for(int i = 0; i < tileList.size(); i++){
             strobe(tileList.get(i));
         }
-
     }
-    
 }

@@ -7,12 +7,11 @@ import edu.macalester.graphics.*;
 /**
  * An interactable tile object that will appear on a canvas
  */
-public  class Tile  {   //extends either ellipse or rectangle to change the shape 
+public class Tile  {
     
     Boolean tileIsLit = false;
     Boolean isRectangle = false;
 
-    
     private Fillable shape;
 
     /**
@@ -24,7 +23,7 @@ public  class Tile  {   //extends either ellipse or rectangle to change the shap
      * @param color fill color of tile
      */
     public Tile(double topX, double topY, double WIDTH, double HEIGHT, Color color, boolean isRectangle){
-        if(isRectangle){
+        if (isRectangle) {
             shape = new Rectangle(topX, topY, WIDTH, HEIGHT);
             shape.setFillColor(color);
         } else {
@@ -50,8 +49,4 @@ public  class Tile  {   //extends either ellipse or rectangle to change the shap
     public void setFillColor(Color color) {
         shape.setFillColor(color);
     }
-
 }
-
-
-
