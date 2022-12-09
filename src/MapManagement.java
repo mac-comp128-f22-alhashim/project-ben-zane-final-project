@@ -23,10 +23,4 @@ public class MapManagement {
 
         return dimensions;
     }
-
-    //main method to print the map
-    public static void main(String[] args) {
-        MapManagement map = new MapManagement();
-        System.out.println(map.dimensionsGenerator(10));
-    } 
 }

@@ -1,4 +1,5 @@
 import edu.macalester.graphics.CanvasWindow;
+import edu.macalester.graphics.Fillable;
 import edu.macalester.graphics.FontStyle;
 import edu.macalester.graphics.GraphicsObject;
 import edu.macalester.graphics.GraphicsText;
@@ -9,17 +10,7 @@ import java.awt.Color;
 import java.util.ArrayDeque;
 
 public class SequenceGame {
-    /*
-     * TODO (remove lines as completed or add as necessary)
-     * 
-     * Fix issue where if the user clicks on the canvas when the sequence is animating, the clicks are registered
-     * 
-     * Potentially change the squares to ellipses as an option for the user to choose between
-     * Clean up code:
-     *      Decomposition in all classes
-     *      Potentially remove MapManagement and move into TileManager
-     *      Refactor for readability (variable names, comments/javadoc, structure + organization, etc.)
-     */
+    
     private int level;
     private boolean running;
     private boolean strobesEnabled;
@@ -30,6 +21,7 @@ public class SequenceGame {
     private TileManager tileManage;
     private MapManagement mapManage;
     private GraphicsText levelLable;
+
 
     private final int SIDE = 650;
     private final int CANVAS_CTR = SIDE/2;
@@ -74,13 +66,15 @@ public class SequenceGame {
             if (!userSequence.isEmpty()) {
 
                 // If the element the user clicked on is a Tile
-                if (clickedElement instanceof Tile) {
+                if (clickedElement instanceof GraphicsObject && clickedElement instanceof Fillable) {
+
 
                     // If the element the user clicked on is the correct Tile in the sequence
-                    if (clickedElement.equals(userSequence.peek())) {
+                    if (clickedElement.equals(userSequence.peek().getShape())) {
 
                         // Provide visual feedback of the clicked tile
-                        userClickedTile(clickedElement);
+                        
+                        userClickedTile((Fillable) clickedElement);
 
                         // Remove the Tile from the sequence
                         userSequence.pop();
@@ -100,10 +94,14 @@ public class SequenceGame {
         });
     }
 
-    private void userClickedTile(GraphicsObject clickedElement) {
-        colorTile((Tile) clickedElement, Color.WHITE);
+    private void userClickedTile(Fillable clickedElement) {
+        Color originalColor = (Color) clickedElement.getFillColor();
+
+        clickedElement.setFillColor(Color.WHITE);
+        canvas.draw();
         canvas.pause(200);
-        colorTile((Tile) clickedElement, TileManager.STD_COLOR);
+        clickedElement.setFillColor(originalColor);
+        canvas.draw();
     }
 
     private void changeLevel() {
@@ -191,11 +189,27 @@ public class SequenceGame {
         toggleStrobeOff.onClick(() -> {
             options.setText("Color randomizer disabled!");
             strobesEnabled = false;
+            options.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
+
         });
 
         toggleStrobeOn.onClick(() -> {
             options.setText("Color randomizer enabled!");
             strobesEnabled = true;
+            options.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
+        });
+
+        setShapeRect.onClick(() -> {
+            options.setText("Shape set to rectangle!");
+            tileManage.setShapeRectangle();
+            options.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
+        });
+
+        setShapeEllipse.onClick(() -> {
+            options.setText("Shape set to ellipse!");
+            tileManage.setShapeEllipse();
+            options.setCenter(CANVAS_CTR, title.getCenter().getY() * 3);
+
         });
 
         quit.onClick(() -> System.exit(0));
@@ -237,10 +251,10 @@ public class SequenceGame {
         canvas.draw();
     }
 
-    private void colorTile(Tile tile, Color color) {
-        tile.setFillColor(color);
-        canvas.draw();
-    }
+    // private void colorTile(Tile tile, Color color) {
+    //     tile.setFillColor(color);
+    //     canvas.draw();
+    // }
 
     private void gameLose() {
         running = false;

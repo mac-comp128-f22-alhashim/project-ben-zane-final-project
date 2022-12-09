@@ -17,6 +17,7 @@ public class TileManager {
     CanvasWindow canvas;
 
     private int randomNum;
+    private boolean isRectangle = true;
     
     private List<Tile> tileList = new ArrayList<Tile>();
     private List<Integer> solution = new ArrayList<Integer>();  
@@ -33,6 +34,8 @@ public class TileManager {
     public TileManager(CanvasWindow canvas){
         this.canvas = canvas;
     }
+    
+
     
     /* 
     * A method that compares the orginal list of tiles and the list of tiles that has the 
@@ -65,7 +68,7 @@ public class TileManager {
 
     public void removeCorrectTiles(){
        for(int i = 0; i < correctTileList.size(); i++){
-        canvas.remove(correctTileList.get(i));
+        canvas.remove(correctTileList.get(i).getShapeGO());
         }
     }
 
@@ -84,6 +87,15 @@ public class TileManager {
         tileList.clear();
         solution.clear();
     }
+
+    public void setShapeRectangle(){
+        isRectangle = true;
+    }
+
+    public void setShapeEllipse(){
+        isRectangle = false;
+    }
+
     // tried to get method below to make use of the map
     /**
      * A method that creates the tile objects with rows and columns for the tiles
@@ -94,9 +106,10 @@ public class TileManager {
 
         for (int column = 0; column < i; column ++){
             for (int row = 0; row < i; row ++){
-                Tile newTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), STD_COLOR);
+                Tile newTile = new Tile(topX, topY, dimensions.get(i), dimensions.get(i), STD_COLOR, isRectangle);
 
-                canvas.add(newTile);
+                newTile.setFillColor(STD_COLOR);
+                canvas.add(newTile.getShapeGO());
                 
                 tileList.add(newTile);
                 
@@ -125,19 +138,18 @@ public class TileManager {
         // Add the index of the correct in-order tile to the solution list
         solution.add(randomNumber);
 
-        // Printing for debugging purposes, remove before pushing to prod
-        System.out.println(solution.toString());
-
         lightTilesInSequence(canvas);
     }
 
     private void lightTilesInSequence(CanvasWindow canvas) {
         for (int index : solution) {
-            tileList.get(index).setFillColor(LIT_COLOR);
+
+            Color startColor = (Color) tileList.get(index).getShape().getFillColor();
+            tileList.get(index).getShape().setFillColor(LIT_COLOR);
             canvas.draw();
             canvas.pause(500);
 
-            tileList.get(index).setFillColor(STD_COLOR);
+            tileList.get(index).getShape().setFillColor(startColor);
             canvas.draw();
             canvas.pause(500);
         }
@@ -148,8 +160,7 @@ public class TileManager {
     public void strobe(Tile t){
         Random rand = new Random();
         Color color = colors[rand.nextInt(colors.length)];
-        t.setFillColor(color);
-       
+        t.getShape().setFillColor(color); 
     }
 
     public void strobeAll(){

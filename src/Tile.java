@@ -1,13 +1,19 @@
 import edu.macalester.graphics.Rectangle;
+import edu.macalester.graphics.Ellipse;
 import java.awt.Color;
+import edu.macalester.graphics.*;
 
 
 /**
  * An interactable tile object that will appear on a canvas
  */
-public class Tile extends Rectangle {   //extends either ellipse or rectangle to change the shape 
+public  class Tile  {   //extends either ellipse or rectangle to change the shape 
     
     Boolean tileIsLit = false;
+    Boolean isRectangle = false;
+
+    
+    private Fillable shape;
 
     /**
      * Constructs tile with variable input
@@ -17,9 +23,13 @@ public class Tile extends Rectangle {   //extends either ellipse or rectangle to
      * @param HEIGHT height of tile
      * @param color fill color of tile
      */
-    public Tile(double topX, double topY, double WIDTH, double HEIGHT, Color color){
-        super(topX, topY, WIDTH, HEIGHT);
-        this.setFillColor(color);
+    public Tile(double topX, double topY, double WIDTH, double HEIGHT, Color color, boolean isRectangle){
+        if(isRectangle){
+            shape = new Rectangle(topX, topY, WIDTH, HEIGHT);
+            shape.setFillColor(color);
+        } else {
+            shape = new Ellipse(topX, topY, WIDTH, HEIGHT);
+        }
     }
     
     /**
@@ -28,6 +38,19 @@ public class Tile extends Rectangle {   //extends either ellipse or rectangle to
     public boolean isLit(){
         return tileIsLit;
     } 
+
+    public Fillable getShape() {
+        return shape;
+    }
+
+   public GraphicsObject getShapeGO(){
+        return (GraphicsObject) shape;
+    }
+
+    public void setFillColor(Color color) {
+        shape.setFillColor(color);
+    }
+
 }
 
 
